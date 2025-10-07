@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos - Dispensa Escolar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c1f 50%, #6ba82f 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+            border-top: 5px solid #4a7c1f;
+        }
+
+        .header h1 {
+            color: #2d5016;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #4a7c1f;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: #2d5016;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            background: #f0f7ed;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4a7c1f 0%, #6ba82f 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            border-top: 5px solid #4a7c1f;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d5016;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d4e7c5;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4a7c1f;
+            background: #f0f7ed;
+        }
+
+        .category-title {
+            background: linear-gradient(135deg, #4a7c1f 0%, #6ba82f 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0 15px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .item-card {
+            background: #f0f7ed;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #d4e7c5;
+            transition: all 0.3s;
+        }
+
+        .item-card:hover {
+            border-color: #4a7c1f;
+            box-shadow: 0 5px 15px rgba(74, 124, 31, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .item-card label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d5016;
+            font-weight: 600;
+        }
+
+        .item-card input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #d4e7c5;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+        }
+
+        .item-card input:focus {
+            border-color: #4a7c1f;
+            outline: none;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a7c1f 0%, #6ba82f 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 124, 31, 0.4);
+            background: linear-gradient(135deg, #3a6617 0%, #5a9a25 100%);
+        }
+
+        .pedidos-list {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-top: 5px solid #4a7c1f;
+        }
+
+        .pedido-card {
+            background: #f0f7ed;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #4a7c1f;
+        }
+
+        .pedido-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d4e7c5;
+        }
+
+        .pedido-header h3 {
+            color: #2d5016;
+        }
+
+        .pedido-info {
+            font-size: 0.95em;
+            color: #4a7c1f;
+            font-weight: 600;
+        }
+
+        .pedido-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .pedido-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            border: 1px solid #d4e7c5;
+        }
+
+        .pedido-item strong {
+            color: #4a7c1f;
+        }
+
+        .btn-delete {
+            background: #c82333;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: #a71d2a;
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4a7c1f;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Sistema de Pedidos</h1>
+            <p>Dispensa Escolar - Gerenciamento de Estoque</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('novo-pedido')">➕ Novo Pedido</button>
+            <button class="tab-btn" onclick="showTab('historico')">📋 Histórico de Pedidos</button>
+        </div>
+
+        <div id="novo-pedido" class="tab-content active">
+            <div class="form-section">
+                <div id="alert-container"></div>
+                
+                <form id="pedidoForm">
+                    <div class="form-group">
+                        <label for="solicitante">👤 Nome do Solicitante:</label>
+                        <input type="text" id="solicitante" required placeholder="Digite seu nome">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data">📅 Data do Pedido:</label>
+                        <input type="date" id="data" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unidade">🏫 Unidade/Setor:</label>
+                        <select id="unidade" required>
+                            <option value="">Selecione a unidade</option>
+                            <option value="Copa Central">Copa Central</option>
+                            <option value="Cozinha Bloco A">Cozinha Bloco A</option>
+                            <option value="Cozinha Bloco B">Cozinha Bloco B</option>
+                            <option value="Refeitório">Refeitório</option>
+                        </select>
+                    </div>
+
+                    <div class="category-title">🧴 LIMPEZA E DESCARTÁVEIS</div>
+                    <div class="items-grid">
+                        <div class="item-card">
+                            <label>Limpador Multi uso (veja/Similar)</label>
+                            <input type="text" name="limpador_multi" placeholder="Ex: 4UND">
+                        </div>
+                        <div class="item-card">
+                            <label>Papel Higiênico</label>
+                            <input type="text" name="papel_higienico" placeholder="Ex: 3 fardos">
+                        </div>
+                        <div class="item-card">
+                            <label>Água Sanitária</label>
+                            <input type="text" name="agua_sanitaria" placeholder="Ex: 1 CX">
+                        </div>
+                        <div class="item-card">
+                            <label>Detergente (Ipê)</label>
+                            <input type="text" name="detergente" placeholder="Ex: 1 CX">
+                        </div>
+                        <div class="item-card">
+                            <label>Polidor de Alumínio</label>
+                            <input type="text" name="polidor_aluminio" placeholder="Ex: 2UND">
+                        </div>
+                        <div class="item-card">
+                            <label>Sabão em Pó</label>
+                            <input type="text" name="sabao_po" placeholder="Ex: 6UNID">
+                        </div>
+                        <div class="item-card">
+                            <label>Cheirinho ATOL</label>
+                            <input type="text" name="cheirinho" placeholder="Ex: 5UND">
+                        </div>
+                        <div class="item-card">
+                            <label>Saco para Lixo 100L</label>
+                            <input type="text" name="saco_lixo" placeholder="Ex: 2 FARDOS">
+                        </div>
+                        <div class="item-card">
+                            <label>Bobina Sacola Transparente 30x40</label>
+                            <input type="text" name="bobina_sacola" placeholder="Ex: 2UNID">
+                        </div>
+                        <div class="item-card">
+                            <label>Touca</label>
+                            <input type="text" name="touca" placeholder="Ex: 2UNID">
+                        </div>
+                        <div class="item-card">
+                            <label>Desinfetante</label>
+                            <input type="text" name="desinfetante" placeholder="Ex: 2">
+                        </div>
+                        <div class="item-card">
+                            <label>Esponja</label>
+                            <input type="text" name="esponja" placeholder="Ex: 2 PCT/3 UND">
+                        </div>
+                        <div class="item-card">
+                            <label>Bom Bril</label>
+                            <input type="text" name="bom_bril" placeholder="Ex: 2UND">
+                        </div>
+                    </div>
+
+                    <div class="category-title">🥗 ALIMENTOS DIVERSOS</div>
+                    <div class="items-grid">
+                        <div class="item-card">
+                            <label>Feijão</label>
+                            <input type="text" name="feijao" placeholder="Ex: 1 FARDO">
+                        </div>
+                        <div class="item-card">
+                            <label>Macarrão</label>
+                            <input type="text" name="macarrao" placeholder="Ex: 1 FARDO">
+                        </div>
+                        <div class="item-card">
+                            <label>Açúcar</label>
+                            <input type="text" name="acucar" placeholder="Ex: 1 FARDO">
+                        </div>
+                        <div class="item-card">
+                            <label>Farinha de Mandioca</label>
+                            <input type="text" name="farinha_mandioca" placeholder="Ex: 3 kg">
+                        </div>
+                        <div class="item-card">
+                            <label>Fubá-Flocão</label>
+                            <input type="text" name="fuba_flocao" placeholder="Ex: 9 Pacotes">
+                        </div>
+                        <div class="item-card">
+                            <label>Óleo de Soja</label>
+                            <input type="text" name="oleo_soja" placeholder="Ex: 1 unidade">
+                        </div>
+                        <div class="item-card">
+                            <label>Vinagre</label>
+                            <input type="text" name="vinagre" placeholder="Ex: 1 unidade">
+                        </div>
+                        <div class="item-card">
+                            <label>Sal</label>
+                            <input type="text" name="sal" placeholder="Ex: 2KG">
+                        </div>
+                        <div class="item-card">
+                            <label>Extrato de Tomate</label>
+                            <input type="text" name="extrato_tomate" placeholder="Ex: 3 UNIDADES">
+                        </div>
+                        <div class="item-card">
+                            <label>Biscoito Maizena</label>
+                            <input type="text" name="biscoito_maizena" placeholder="Ex: 1 caixa com 20 unid.">
+                        </div>
+                        <div class="item-card">
+                            <label>Gelatina</label>
+                            <input type="text" name="gelatina" placeholder="Ex: 1 CAIXA">
+                        </div>
+                        <div class="item-card">
+                            <label>Preparo para Bolo (Baunilha)</label>
+                            <input type="text" name="preparo_bolo" placeholder="Ex: 2 pacotes">
+                        </div>
+                        <div class="item-card">
+                            <label>Leite de Coco</label>
+                            <input type="text" name="leite_coco" placeholder="Ex: 1">
+                        </div>
+                        <div class="item-card">
+                            <label>Leite em Pó</label>
+                            <input type="text" name="leite_po" placeholder="Ex: 2 pacotes 400g">
+                        </div>
+                        <div class="item-card">
+                            <label>Bolacha Cream Craker</label>
+                            <input type="text" name="bolacha_cream" placeholder="Ex: -">
+                        </div>
+                        <div class="item-card">
+                            <label>Margarina</label>
+                            <input type="text" name="margarina" placeholder="Ex: 1 pote 3kg">
+                        </div>
+                        <div class="item-card">
+                            <label>Alho</label>
+                            <input type="text" name="alho" placeholder="Ex: 1">
+                        </div>
+                        <div class="item-card">
+                            <label>Café</label>
+                            <input type="text" name="cafe" placeholder="Ex: 2 pacotes 500g">
+                        </div>
+                    </div>
+
+                    <div class="category-title">📝 Observações</div>
+                    <div class="form-group">
+                        <label for="observacoes">Observações Adicionais:</label>
+                        <input type="text" id="observacoes" placeholder="Ex: Item urgente, substituição necessária, etc.">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">✅ Enviar Pedido</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="historico" class="tab-content">
+            <div class="pedidos-list">
+                <h2 style="margin-bottom: 20px; color: #2d5016;">📋 Histórico de Pedidos</h2>
+                <div id="pedidos-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar data atual
+        document.getElementById('data').valueAsDate = new Date();
+
+        // Sistema de armazenamento (simula backend)
+        let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+
+        // Alternar entre abas
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'historico') {
+                renderPedidos();
+            }
+        }
+
+        // Mostrar alerta
+        function showAlert(message, type) {
+            const container = document.getElementById('alert-container');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Enviar formulário
+        document.getElementById('pedidoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const solicitante = document.getElementById('solicitante').value;
+            const data = document.getElementById('data').value;
+            const unidade = document.getElementById('unidade').value;
+            const observacoes = document.getElementById('observacoes').value;
+            
+            const items = {};
+            const inputs = document.querySelectorAll('.item-card input');
+            let hasItems = false;
+            
+            inputs.forEach(input => {
+                const value = input.value.trim();
+                if (value !== '') {
+                    items[input.name] = {
+                        quantidade: value,
+                        label: input.previousElementSibling.textContent
+                    };
+                    hasItems = true;
+                }
+            });
+            
+            if (!hasItems) {
+                showAlert('⚠️ Por favor, adicione pelo menos um item ao pedido!', 'error');
+                return;
+            }
+            
+            const pedido = {
+                id: Date.now(),
+                solicitante,
+                data,
+                unidade,
+                observacoes,
+                items,
+                dataCriacao: new Date().toLocaleString('pt-BR')
+            };
+            
+            pedidos.unshift(pedido);
+            localStorage.setItem('pedidos', JSON.stringify(pedidos));
+            
+            showAlert('✅ Pedido enviado com sucesso!', 'success');
+            
+            // Limpar formulário
+            this.reset();
+            document.getElementById('data').valueAsDate = new Date();
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Renderizar pedidos
+        function renderPedidos() {
+            const container = document.getElementById('pedidos-container');
+            
+            if (pedidos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>📭 Nenhum pedido registrado</h3>
+                        <p>Os pedidos enviados aparecerão aqui</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = pedidos.map(pedido => `
+                <div class="pedido-card">
+                    <div class="pedido-header">
+                        <div>
+                            <h3>${pedido.solicitante}</h3>
+                            <div class="pedido-info">
+                                📅 ${new Date(pedido.data).toLocaleDateString('pt-BR')} | 
+                                🏫 ${pedido.unidade} | 
+                                🕐 ${pedido.dataCriacao}
+                            </div>
+                            ${pedido.observacoes ? `<div style="margin-top: 10px; color: #4a7c1f; font-weight: 600;">📝 ${pedido.observacoes}</div>` : ''}
+                        </div>
+                        <button class="btn-delete" onclick="deletePedido(${pedido.id})">🗑️ Excluir</button>
+                    </div>
+                    <div class="pedido-items">
+                        ${Object.entries(pedido.items).map(([key, item]) => `
+                            <div class="pedido-item">
+                                <div style="color: #2d5016; font-weight: 600; margin-bottom: 3px;">${item.label}</div>
+                                <strong>${item.quantidade}</strong>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Deletar pedido
+        function deletePedido(id) {
+            if (confirm('Tem certeza que deseja excluir este pedido?')) {
+                pedidos = pedidos.filter(p => p.id !== id);
+                localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                renderPedidos();
+            }
+        }
+
+        // Renderizar pedidos ao carregar
+        renderPedidos();
+    </script>
+</body>
+</html>

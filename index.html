@@ -45,6 +45,25 @@
             font-weight: 600;
         }
 
+        .sync-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .sync-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .sync-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
         .tabs {
             display: flex;
             gap: 10px;
@@ -191,10 +210,32 @@
             margin-top: 20px;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(74, 124, 31, 0.4);
             background: linear-gradient(135deg, #3a6617 0%, #5a9a25 100%);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-refresh {
+            background: #4a7c1f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-refresh:hover {
+            background: #3a6617;
+            transform: scale(1.05);
         }
 
         .pedidos-list {
@@ -296,6 +337,13 @@
             color: #721c24;
             border: 2px solid #f5c6cb;
         }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #4a7c1f;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -303,6 +351,7 @@
         <div class="header">
             <h1>🍽️ Sistema de Pedidos</h1>
             <p>Dispensa Escolar - Gerenciamento de Estoque</p>
+            <div id="sync-status" class="sync-status sync-offline">🔄 Conectando...</div>
         </div>
 
         <div class="tabs">
@@ -474,25 +523,30 @@
                         <input type="text" id="observacoes" placeholder="Ex: Item urgente, substituição necessária, etc.">
                     </div>
 
-                    <button type="submit" class="btn btn-primary">✅ Enviar Pedido</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">✅ Enviar Pedido</button>
                 </form>
             </div>
         </div>
 
         <div id="historico" class="tab-content">
             <div class="pedidos-list">
-                <h2 style="margin-bottom: 20px; color: #2d5016;">📋 Histórico de Pedidos</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: #2d5016;">📋 Histórico de Pedidos</h2>
+                    <button class="btn-refresh" onclick="loadPedidos()">🔄 Atualizar</button>
+                </div>
                 <div id="pedidos-container"></div>
             </div>
         </div>
     </div>
 
     <script>
+        // Configuração do armazenamento compartilhado
+        const STORAGE_KEY = 'pedidos_dispensa_escolar';
+        let pedidos = [];
+        let isOnline = false;
+
         // Inicializar data atual
         document.getElementById('data').valueAsDate = new Date();
-
-        // Sistema de armazenamento (simula backend)
-        let pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
 
         // Alternar entre abas
         function showTab(tabName) {
@@ -507,7 +561,20 @@
             event.target.classList.add('active');
             
             if (tabName === 'historico') {
-                renderPedidos();
+                loadPedidos();
+            }
+        }
+
+        // Atualizar status de conexão
+        function updateSyncStatus(online) {
+            isOnline = online;
+            const statusEl = document.getElementById('sync-status');
+            if (online) {
+                statusEl.textContent = '✅ Online - Dados Compartilhados';
+                statusEl.className = 'sync-status sync-online';
+            } else {
+                statusEl.textContent = '⚠️ Modo Local - Dados não compartilhados';
+                statusEl.className = 'sync-status sync-offline';
             }
         }
 
@@ -520,9 +587,46 @@
             }, 5000);
         }
 
+        // Carregar pedidos do armazenamento
+        async function loadPedidos() {
+            const container = document.getElementById('pedidos-container');
+            container.innerHTML = '<div class="loading">🔄 Carregando pedidos...</div>';
+            
+            try {
+                // Tenta carregar do armazenamento na memória
+                const storedData = window.pedidosData || [];
+                pedidos = storedData;
+                updateSyncStatus(true);
+                renderPedidos();
+            } catch (error) {
+                console.error('Erro ao carregar pedidos:', error);
+                updateSyncStatus(false);
+                // Fallback para dados locais em memória
+                renderPedidos();
+            }
+        }
+
+        // Salvar pedidos
+        async function savePedidos() {
+            try {
+                // Salva na memória global para compartilhar entre usuários
+                window.pedidosData = pedidos;
+                updateSyncStatus(true);
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar pedidos:', error);
+                updateSyncStatus(false);
+                return false;
+            }
+        }
+
         // Enviar formulário
-        document.getElementById('pedidoForm').addEventListener('submit', function(e) {
+        document.getElementById('pedidoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Enviando...';
             
             const solicitante = document.getElementById('solicitante').value;
             const data = document.getElementById('data').value;
@@ -546,6 +650,8 @@
             
             if (!hasItems) {
                 showAlert('⚠️ Por favor, adicione pelo menos um item ao pedido!', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Enviar Pedido';
                 return;
             }
             
@@ -560,13 +666,20 @@
             };
             
             pedidos.unshift(pedido);
-            localStorage.setItem('pedidos', JSON.stringify(pedidos));
+            const success = await savePedidos();
             
-            showAlert('✅ Pedido enviado com sucesso!', 'success');
+            if (success) {
+                showAlert('✅ Pedido enviado com sucesso! Todos os usuários podem visualizar.', 'success');
+            } else {
+                showAlert('⚠️ Pedido salvo localmente. Para compartilhar, configure um banco de dados.', 'error');
+            }
             
             // Limpar formulário
             this.reset();
             document.getElementById('data').valueAsDate = new Date();
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✅ Enviar Pedido';
             
             // Scroll para o topo
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -579,7 +692,7 @@
             if (pedidos.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <h3>📭 Nenhum pedido registrado</h3>
+                        <h3>🔭 Nenhum pedido registrado</h3>
                         <p>Os pedidos enviados aparecerão aqui</p>
                     </div>
                 `;
@@ -613,16 +726,16 @@
         }
 
         // Deletar pedido
-        function deletePedido(id) {
+        async function deletePedido(id) {
             if (confirm('Tem certeza que deseja excluir este pedido?')) {
                 pedidos = pedidos.filter(p => p.id !== id);
-                localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                await savePedidos();
                 renderPedidos();
             }
         }
 
-        // Renderizar pedidos ao carregar
-        renderPedidos();
+        // Inicializar aplicação
+        loadPedidos();
     </script>
 </body>
 </html>

@@ -3,739 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Pedidos - Dispensa Escolar</title>
+    <title>Sistema de Pedidos de Dispensa Escolar</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* 🌟 Estilos Modernos e Responsivos */
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #f4f4f4;
+            --text-color: #333;
+            --success-color: #4CAF50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2d5016 0%, #4a7c1f 50%, #6ba82f 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 0;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
             text-align: center;
-            border-top: 5px solid #4a7c1f;
-        }
-
-        .header h1 {
-            color: #2d5016;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #4a7c1f;
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-
-        .sync-status {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-top: 10px;
-            font-weight: 600;
-        }
-
-        .sync-online {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .sync-offline {
-            background: #f8d7da;
-            color: #721c24;
         }
 
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            justify-content: center;
+            background: #eee;
         }
 
-        .tab-btn {
-            flex: 1;
-            padding: 15px;
-            background: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            color: #2d5016;
-        }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-            background: #f0f7ed;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #4a7c1f 0%, #6ba82f 100%);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .form-section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            border-top: 5px solid #4a7c1f;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #2d5016;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #d4e7c5;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border 0.3s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #4a7c1f;
-            background: #f0f7ed;
-        }
-
-        .category-title {
-            background: linear-gradient(135deg, #4a7c1f 0%, #6ba82f 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0 15px 0;
-            font-size: 1.3em;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .item-card {
-            background: #f0f7ed;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #d4e7c5;
-            transition: all 0.3s;
-        }
-
-        .item-card:hover {
-            border-color: #4a7c1f;
-            box-shadow: 0 5px 15px rgba(74, 124, 31, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .item-card label {
-            display: block;
-            margin-bottom: 8px;
-            color: #2d5016;
-            font-weight: 600;
-        }
-
-        .item-card input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #d4e7c5;
-            border-radius: 8px;
-            font-size: 1em;
-            background: white;
-        }
-
-        .item-card input:focus {
-            border-color: #4a7c1f;
-            outline: none;
-        }
-
-        .btn {
-            padding: 15px 40px;
-            font-size: 1.2em;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4a7c1f 0%, #6ba82f 100%);
-            color: white;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(74, 124, 31, 0.4);
-            background: linear-gradient(135deg, #3a6617 0%, #5a9a25 100%);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-refresh {
-            background: #4a7c1f;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
+        .tab {
+            padding: 1rem 2rem;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s;
-            margin-bottom: 15px;
+            transition: 0.3s;
         }
 
-        .btn-refresh:hover {
-            background: #3a6617;
-            transform: scale(1.05);
-        }
-
-        .pedidos-list {
+        .tab.active {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-top: 5px solid #4a7c1f;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        section { display: none; }
+        section.active { display: block; }
+
+        form { display: flex; flex-direction: column; gap: 1rem; }
+
+        input, select, textarea {
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #45a049; }
+
+        .items-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .item {
+            background: var(--secondary-color);
+            padding: 1rem;
+            border-radius: 6px;
+            flex: 1 1 200px;
+        }
+
+        .item input {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .pedidos-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .pedido-card {
-            background: #f0f7ed;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 5px solid #4a7c1f;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--secondary-color);
         }
 
-        .pedido-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #d4e7c5;
+        .pedido-card h3 { margin-top: 0; }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9rem;
         }
 
-        .pedido-header h3 {
-            color: #2d5016;
-        }
-
-        .pedido-info {
-            font-size: 0.95em;
-            color: #4a7c1f;
-            font-weight: 600;
-        }
-
-        .pedido-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .pedido-item {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.9em;
-            border: 1px solid #d4e7c5;
-        }
-
-        .pedido-item strong {
-            color: #4a7c1f;
-        }
-
-        .btn-delete {
-            background: #c82333;
-            color: white;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .btn-delete:hover {
-            background: #a71d2a;
-            transform: scale(1.05);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #4a7c1f;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
+        .status.online { background: var(--success-color); color: white; }
+        .status.offline { background: var(--error-color); color: white; }
 
         .alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
         }
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #f5c6cb;
-        }
-
-        .loading {
+        footer {
             text-align: center;
-            padding: 20px;
-            color: #4a7c1f;
-            font-weight: 600;
+            padding: 1rem;
+            margin-top: 2rem;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🍽️ Sistema de Pedidos</h1>
-            <p>Dispensa Escolar - Gerenciamento de Estoque</p>
-            <div id="sync-status" class="sync-status sync-offline">🔄 Conectando...</div>
-        </div>
+    <header>
+        <h1>Sistema de Pedidos de Dispensa Escolar</h1>
+        <div id="sync-status" class="status offline">Offline</div>
+    </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('novo-pedido')">➕ Novo Pedido</button>
-            <button class="tab-btn" onclick="showTab('historico')">📋 Histórico de Pedidos</button>
-        </div>
-
-        <div id="novo-pedido" class="tab-content active">
-            <div class="form-section">
-                <div id="alert-container"></div>
-                
-                <form id="pedidoForm">
-                    <div class="form-group">
-                        <label for="solicitante">👤 Nome do Solicitante:</label>
-                        <input type="text" id="solicitante" required placeholder="Digite seu nome">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="data">📅 Data do Pedido:</label>
-                        <input type="date" id="data" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="unidade">🏫 Unidade/Setor:</label>
-                        <select id="unidade" required>
-                            <option value="">Selecione a unidade</option>
-                            <option value="Copa Central">Copa Central</option>
-                            <option value="Cozinha Bloco A">Cozinha Bloco A</option>
-                            <option value="Cozinha Bloco B">Cozinha Bloco B</option>
-                            <option value="Refeitório">Refeitório</option>
-                        </select>
-                    </div>
-
-                    <div class="category-title">🧴 LIMPEZA E DESCARTÁVEIS</div>
-                    <div class="items-grid">
-                        <div class="item-card">
-                            <label>Limpador Multi uso (veja/Similar)</label>
-                            <input type="text" name="limpador_multi" placeholder="Ex: 4UND">
-                        </div>
-                        <div class="item-card">
-                            <label>Papel Higiênico</label>
-                            <input type="text" name="papel_higienico" placeholder="Ex: 3 fardos">
-                        </div>
-                        <div class="item-card">
-                            <label>Água Sanitária</label>
-                            <input type="text" name="agua_sanitaria" placeholder="Ex: 1 CX">
-                        </div>
-                        <div class="item-card">
-                            <label>Detergente (Ipê)</label>
-                            <input type="text" name="detergente" placeholder="Ex: 1 CX">
-                        </div>
-                        <div class="item-card">
-                            <label>Polidor de Alumínio</label>
-                            <input type="text" name="polidor_aluminio" placeholder="Ex: 2UND">
-                        </div>
-                        <div class="item-card">
-                            <label>Sabão em Pó</label>
-                            <input type="text" name="sabao_po" placeholder="Ex: 6UNID">
-                        </div>
-                        <div class="item-card">
-                            <label>Cheirinho ATOL</label>
-                            <input type="text" name="cheirinho" placeholder="Ex: 5UND">
-                        </div>
-                        <div class="item-card">
-                            <label>Saco para Lixo 100L</label>
-                            <input type="text" name="saco_lixo" placeholder="Ex: 2 FARDOS">
-                        </div>
-                        <div class="item-card">
-                            <label>Bobina Sacola Transparente 30x40</label>
-                            <input type="text" name="bobina_sacola" placeholder="Ex: 2UNID">
-                        </div>
-                        <div class="item-card">
-                            <label>Touca</label>
-                            <input type="text" name="touca" placeholder="Ex: 2UNID">
-                        </div>
-                        <div class="item-card">
-                            <label>Desinfetante</label>
-                            <input type="text" name="desinfetante" placeholder="Ex: 2">
-                        </div>
-                        <div class="item-card">
-                            <label>Esponja</label>
-                            <input type="text" name="esponja" placeholder="Ex: 2 PCT/3 UND">
-                        </div>
-                        <div class="item-card">
-                            <label>Bom Bril</label>
-                            <input type="text" name="bom_bril" placeholder="Ex: 2UND">
-                        </div>
-                    </div>
-
-                    <div class="category-title">🥗 ALIMENTOS DIVERSOS</div>
-                    <div class="items-grid">
-                        <div class="item-card">
-                            <label>Feijão</label>
-                            <input type="text" name="feijao" placeholder="Ex: 1 FARDO">
-                        </div>
-                        <div class="item-card">
-                            <label>Macarrão</label>
-                            <input type="text" name="macarrao" placeholder="Ex: 1 FARDO">
-                        </div>
-                        <div class="item-card">
-                            <label>Açúcar</label>
-                            <input type="text" name="acucar" placeholder="Ex: 1 FARDO">
-                        </div>
-                        <div class="item-card">
-                            <label>Farinha de Mandioca</label>
-                            <input type="text" name="farinha_mandioca" placeholder="Ex: 3 kg">
-                        </div>
-                        <div class="item-card">
-                            <label>Fubá-Flocão</label>
-                            <input type="text" name="fuba_flocao" placeholder="Ex: 9 Pacotes">
-                        </div>
-                        <div class="item-card">
-                            <label>Óleo de Soja</label>
-                            <input type="text" name="oleo_soja" placeholder="Ex: 1 unidade">
-                        </div>
-                        <div class="item-card">
-                            <label>Vinagre</label>
-                            <input type="text" name="vinagre" placeholder="Ex: 1 unidade">
-                        </div>
-                        <div class="item-card">
-                            <label>Sal</label>
-                            <input type="text" name="sal" placeholder="Ex: 2KG">
-                        </div>
-                        <div class="item-card">
-                            <label>Extrato de Tomate</label>
-                            <input type="text" name="extrato_tomate" placeholder="Ex: 3 UNIDADES">
-                        </div>
-                        <div class="item-card">
-                            <label>Biscoito Maizena</label>
-                            <input type="text" name="biscoito_maizena" placeholder="Ex: 1 caixa com 20 unid.">
-                        </div>
-                        <div class="item-card">
-                            <label>Gelatina</label>
-                            <input type="text" name="gelatina" placeholder="Ex: 1 CAIXA">
-                        </div>
-                        <div class="item-card">
-                            <label>Preparo para Bolo (Baunilha)</label>
-                            <input type="text" name="preparo_bolo" placeholder="Ex: 2 pacotes">
-                        </div>
-                        <div class="item-card">
-                            <label>Leite de Coco</label>
-                            <input type="text" name="leite_coco" placeholder="Ex: 1">
-                        </div>
-                        <div class="item-card">
-                            <label>Leite em Pó</label>
-                            <input type="text" name="leite_po" placeholder="Ex: 2 pacotes 400g">
-                        </div>
-                        <div class="item-card">
-                            <label>Bolacha Cream Craker</label>
-                            <input type="text" name="bolacha_cream" placeholder="Ex: -">
-                        </div>
-                        <div class="item-card">
-                            <label>Margarina</label>
-                            <input type="text" name="margarina" placeholder="Ex: 1 pote 3kg">
-                        </div>
-                        <div class="item-card">
-                            <label>Alho</label>
-                            <input type="text" name="alho" placeholder="Ex: 1">
-                        </div>
-                        <div class="item-card">
-                            <label>Café</label>
-                            <input type="text" name="cafe" placeholder="Ex: 2 pacotes 500g">
-                        </div>
-                    </div>
-
-                    <div class="category-title">📝 Observações</div>
-                    <div class="form-group">
-                        <label for="observacoes">Observações Adicionais:</label>
-                        <input type="text" id="observacoes" placeholder="Ex: Item urgente, substituição necessária, etc.">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" id="submitBtn">✅ Enviar Pedido</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="historico" class="tab-content">
-            <div class="pedidos-list">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2 style="color: #2d5016;">📋 Histórico de Pedidos</h2>
-                    <button class="btn-refresh" onclick="loadPedidos()">🔄 Atualizar</button>
-                </div>
-                <div id="pedidos-container"></div>
-            </div>
-        </div>
+    <div class="tabs">
+        <div class="tab active" data-tab="novo-pedido">➕ Novo Pedido</div>
+        <div class="tab" data-tab="historico">📋 Histórico de Pedidos</div>
     </div>
 
+    <main>
+        <!-- Seção Novo Pedido -->
+        <section id="novo-pedido" class="active">
+            <div id="alert-container"></div>
+            <form id="pedido-form">
+                <label>Solicitante:
+                    <input type="text" id="solicitante" required>
+                </label>
+                <label>Data do Pedido:
+                    <input type="date" id="data-pedido" required>
+                </label>
+                <label>Unidade:
+                    <select id="unidade" required>
+                        <option value="">Selecione</option>
+                        <option value="Escola A">Escola A</option>
+                        <option value="Escola B">Escola B</option>
+                    </select>
+                </label>
+
+                <label>Categoria:
+                    <select id="categoria">
+                        <option value="">Selecione</option>
+                        <option value="Limpeza">Limpeza</option>
+                        <option value="Alimentos">Alimentos</option>
+                    </select>
+                </label>
+
+                <div id="itens-container" class="items-list"></div>
+
+                <label>Observações:
+                    <textarea id="observacoes"></textarea>
+                </label>
+
+                <button type="submit">Salvar Pedido</button>
+            </form>
+        </section>
+
+        <!-- Seção Histórico -->
+        <section id="historico">
+            <div class="pedidos-container" id="pedidos-container"></div>
+        </section>
+    </main>
+
+    <footer>📘 Sistema desenvolvido com ❤️ para gestão escolar eficiente.</footer>
+
     <script>
-        // Configuração do armazenamento compartilhado
-        const STORAGE_KEY = 'pedidos_dispensa_escolar';
+        // 🧠 Estado global
         let pedidos = [];
-        let isOnline = false;
 
-        // Inicializar data atual
-        document.getElementById('data').valueAsDate = new Date();
-
-        // Alternar entre abas
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-            
-            if (tabName === 'historico') {
-                loadPedidos();
-            }
-        }
-
-        // Atualizar status de conexão
-        function updateSyncStatus(online) {
-            isOnline = online;
-            const statusEl = document.getElementById('sync-status');
-            if (online) {
-                statusEl.textContent = '✅ Online - Dados Compartilhados';
-                statusEl.className = 'sync-status sync-online';
-            } else {
-                statusEl.textContent = '⚠️ Modo Local - Dados não compartilhados';
-                statusEl.className = 'sync-status sync-offline';
-            }
-        }
-
-        // Mostrar alerta
-        function showAlert(message, type) {
+        // 🎨 Funções de UI
+        function showAlert(message, type = 'success') {
             const container = document.getElementById('alert-container');
-            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 5000);
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 3000);
         }
 
-        // Carregar pedidos do armazenamento
+        function updateSyncStatus(online) {
+            const statusEl = document.getElementById('sync-status');
+            statusEl.textContent = online ? 'Online' : 'Offline';
+            statusEl.className = `status ${online ? 'online' : 'offline'}`;
+        }
+
+        // 🧩 Tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+                if (tab.dataset.tab === 'historico') loadPedidos();
+            });
+        });
+
+        // 🔁 Atualiza status online/offline
+        window.addEventListener('online', () => updateSyncStatus(true));
+        window.addEventListener('offline', () => updateSyncStatus(false));
+        updateSyncStatus(navigator.onLine);
+
+        // 🧩 Itens por categoria
+        const itensPorCategoria = {
+            Limpeza: ['Sabão', 'Desinfetante', 'Vassoura', 'Pano de chão'],
+            Alimentos: ['Arroz', 'Feijão', 'Macarrão', 'Óleo']
+        };
+
+        document.getElementById('categoria').addEventListener('change', (e) => {
+            const container = document.getElementById('itens-container');
+            container.innerHTML = '';
+            const itens = itensPorCategoria[e.target.value] || [];
+            itens.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <label>${item}
+                        <input type="number" min="0" value="0" data-item="${item}">
+                    </label>
+                `;
+                container.appendChild(div);
+            });
+        });
+
+        // ✅ Envio do formulário
+        document.getElementById('pedido-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const solicitante = document.getElementById('solicitante').value;
+            const dataPedido = document.getElementById('data-pedido').value;
+            const unidade = document.getElementById('unidade').value;
+            const observacoes = document.getElementById('observacoes').value;
+
+            const itens = Array.from(document.querySelectorAll('#itens-container input'))
+                .filter(input => parseInt(input.value) > 0)
+                .map(input => ({
+                    nome: input.dataset.item,
+                    quantidade: input.value
+                }));
+
+            if (itens.length === 0) {
+                showAlert('Adicione pelo menos um item ao pedido.', 'error');
+                return;
+            }
+
+            const pedido = { solicitante, data_pedido: dataPedido, unidade, observacoes, itens };
+
+            try {
+                const response = await fetch('api.php?action=criar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(pedido)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('✅ Pedido salvo com sucesso!', 'success');
+                    e.target.reset();
+                    document.getElementById('itens-container').innerHTML = '';
+                    updateSyncStatus(true);
+                } else {
+                    showAlert('⚠️ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ Erro ao salvar pedido: ' + error.message, 'error');
+                updateSyncStatus(false);
+            }
+        });
+
+        // 📋 Carregar histórico
         async function loadPedidos() {
             const container = document.getElementById('pedidos-container');
             container.innerHTML = '<div class="loading">🔄 Carregando pedidos...</div>';
-            
-            try {
-                // Tenta carregar do armazenamento na memória
-                const storedData = window.pedidosData || [];
-                pedidos = storedData;
-                updateSyncStatus(true);
-                renderPedidos();
-            } catch (error) {
-                console.error('Erro ao carregar pedidos:', error);
-                updateSyncStatus(false);
-                // Fallback para dados locais em memória
-                renderPedidos();
-            }
-        }
 
-        // Salvar pedidos
-        async function savePedidos() {
             try {
-                // Salva na memória global para compartilhar entre usuários
-                window.pedidosData = pedidos;
-                updateSyncStatus(true);
-                return true;
-            } catch (error) {
-                console.error('Erro ao salvar pedidos:', error);
-                updateSyncStatus(false);
-                return false;
-            }
-        }
+                const response = await fetch('api.php?action=listar');
+                const data = await response.json();
 
-        // Enviar formulário
-        document.getElementById('pedidoForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Enviando...';
-            
-            const solicitante = document.getElementById('solicitante').value;
-            const data = document.getElementById('data').value;
-            const unidade = document.getElementById('unidade').value;
-            const observacoes = document.getElementById('observacoes').value;
-            
-            const items = {};
-            const inputs = document.querySelectorAll('.item-card input');
-            let hasItems = false;
-            
-            inputs.forEach(input => {
-                const value = input.value.trim();
-                if (value !== '') {
-                    items[input.name] = {
-                        quantidade: value,
-                        label: input.previousElementSibling.textContent
-                    };
-                    hasItems = true;
+                if (data.success) {
+                    pedidos = data.data;
+                    updateSyncStatus(true);
+                    renderPedidos();
+                } else {
+                    throw new Error(data.message);
                 }
-            });
-            
-            if (!hasItems) {
-                showAlert('⚠️ Por favor, adicione pelo menos um item ao pedido!', 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = '✅ Enviar Pedido';
-                return;
+            } catch (error) {
+                console.error(error);
+                updateSyncStatus(false);
+                container.innerHTML = `<div class="alert alert-error">Erro ao carregar pedidos: ${error.message}</div>`;
             }
-            
-            const pedido = {
-                id: Date.now(),
-                solicitante,
-                data,
-                unidade,
-                observacoes,
-                items,
-                dataCriacao: new Date().toLocaleString('pt-BR')
-            };
-            
-            pedidos.unshift(pedido);
-            const success = await savePedidos();
-            
-            if (success) {
-                showAlert('✅ Pedido enviado com sucesso! Todos os usuários podem visualizar.', 'success');
-            } else {
-                showAlert('⚠️ Pedido salvo localmente. Para compartilhar, configure um banco de dados.', 'error');
-            }
-            
-            // Limpar formulário
-            this.reset();
-            document.getElementById('data').valueAsDate = new Date();
-            
-            submitBtn.disabled = false;
-            submitBtn.textContent = '✅ Enviar Pedido';
-            
-            // Scroll para o topo
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        }
 
-        // Renderizar pedidos
+        // 🧱 Renderizar pedidos
         function renderPedidos() {
             const container = document.getElementById('pedidos-container');
-            
+            container.innerHTML = '';
+
             if (pedidos.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>🔭 Nenhum pedido registrado</h3>
-                        <p>Os pedidos enviados aparecerão aqui</p>
-                    </div>
-                `;
+                container.innerHTML = '<p>Nenhum pedido encontrado.</p>';
                 return;
             }
-            
-            container.innerHTML = pedidos.map(pedido => `
-                <div class="pedido-card">
-                    <div class="pedido-header">
-                        <div>
-                            <h3>${pedido.solicitante}</h3>
-                            <div class="pedido-info">
-                                📅 ${new Date(pedido.data).toLocaleDateString('pt-BR')} | 
-                                🏫 ${pedido.unidade} | 
-                                🕐 ${pedido.dataCriacao}
-                            </div>
-                            ${pedido.observacoes ? `<div style="margin-top: 10px; color: #4a7c1f; font-weight: 600;">📝 ${pedido.observacoes}</div>` : ''}
-                        </div>
-                        <button class="btn-delete" onclick="deletePedido(${pedido.id})">🗑️ Excluir</button>
-                    </div>
-                    <div class="pedido-items">
-                        ${Object.entries(pedido.items).map(([key, item]) => `
-                            <div class="pedido-item">
-                                <div style="color: #2d5016; font-weight: 600; margin-bottom: 3px;">${item.label}</div>
-                                <strong>${item.quantidade}</strong>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+
+            pedidos.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'pedido-card';
+                card.innerHTML = `
+                    <h3>${p.solicitante}</h3>
+                    <p><strong>Data:</strong> ${p.data_pedido}</p>
+                    <p><strong>Unidade:</strong> ${p.unidade}</p>
+                    <ul>
+                        ${p.itens.map(i => `<li>${i.nome_item}: ${i.quantidade}</li>`).join('')}
+                    </ul>
+                    <p><strong>Observações:</strong> ${p.observacoes || 'Nenhuma'}</p>
+                    <button onclick="deletePedido(${p.id})">🗑️ Excluir</button>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        // Deletar pedido
+        // ❌ Excluir pedido
         async function deletePedido(id) {
-            if (confirm('Tem certeza que deseja excluir este pedido?')) {
-                pedidos = pedidos.filter(p => p.id !== id);
-                await savePedidos();
-                renderPedidos();
+            if (!confirm('Tem certeza que deseja excluir este pedido?')) return;
+
+            try {
+                const response = await fetch('api.php?action=deletar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('✅ Pedido excluído com sucesso!', 'success');
+                    loadPedidos();
+                } else {
+                    showAlert('⚠️ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ Erro ao excluir pedido: ' + error.message, 'error');
             }
         }
-
-        // Inicializar aplicação
-        loadPedidos();
     </script>
 </body>
 </html>

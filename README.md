@@ -109,27 +109,6 @@ Documentação
 * Storytelling com dados através de visualizações
 * Comunicação técnica clara e objetiva
 
----
-
-## 📁 Estrutura do Projeto
-
-```
-📦 analise-combustiveis-brasil/
-├── 📊 data/
-│   └── dataset_combustiveis.csv
-├── 📓 notebooks/
-│   ├── 01_exploracao_inicial.ipynb
-│   ├── 02_limpeza_dados.ipynb
-│   └── 03_analise_visualizacao.ipynb
-├── 📈 visualizacoes/
-│   ├── mapa_precos_brasil.png
-│   ├── heatmap_produto_regiao.png
-│   ├── dashboard_analises.png
-│   ├── viabilidade_etanol_gasolina.png
-│   └── volatilidade_preco_regiao.png
-├── 📄 README.md
-└── 📄 requirements.txt
-```
 
 ---
 

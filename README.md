@@ -94,37 +94,6 @@ Documentação
 ✅ **Etanol competitivo em apenas 4 estados** - Maioria favorece gasolina  
 ✅ **Volatilidade independe de preço** - Regiões caras podem ter estabilidade  
 
----
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-```bash
-Python 3.8+
-pip ou conda
-```
-
-### Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/analise-combustiveis-brasil.git
-cd analise-combustiveis-brasil
-```
-
-2. Instale as dependências:
-```bash
-pip install -r requirements.txt
-```
-
-3. Execute os notebooks:
-```bash
-jupyter notebook
-```
-
-4. Navegue até `notebooks/` e execute os arquivos na ordem numérica.
-
----
 
 ## 🎓 Competências Desenvolvidas
 
